@@ -2,7 +2,7 @@
   "name": "SmartFit Bitacora",
   "short_name": "Bitacora",
   "description": "Bitácora de entrenamiento estilo Smart Fit.",
-  "start_url": "./index.html",
+  "start_url": "./",
   "scope": "./",
   "display": "standalone",
   "orientation": "portrait",

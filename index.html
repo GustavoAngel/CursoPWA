@@ -393,6 +393,8 @@
     </style>
 </head>
 <body>
+    <button id="btn5min">Notificar en 5 min</button>
+
     <div class="container">
         <h1>
             <span id="smart-word">SMART</span>
@@ -541,6 +543,23 @@
 
 
     <script>
+        document.getElementById("btn5min").addEventListener("click", () => {
+
+        Notification.requestPermission().then(permission => {
+            if (permission === "granted") {
+            
+            setTimeout(() => {
+                new Notification("¡Han pasado 1 minutos!", {
+                body: "¡Hora de continuar, SmartFit Bitácoras! 💪🔥",
+                icon: "./icons/icon-192.png"
+                });
+            }, 1 * 60 * 1000); // 5 minutos
+
+            alert("Notificación programada ✅1");
+            }
+        });
+
+        });
 
                 if ("serviceWorker" in navigator) {
             navigator.serviceWorker.register("./service-worker.js");
