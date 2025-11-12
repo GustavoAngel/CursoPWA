@@ -566,7 +566,24 @@
             navigator.serviceWorker.register("./service-worker.js");
         }
         // --- CONFIGURACIÓN Y CONSTANTES ---
+                // ...existing code...
+        /**
+         * Muestra solo la sección .content-section cuyo id coincida con `idToShow`
+         * y oculta el resto.
+         * @param {string} idToShow - id del elemento .content-section que debe mostrarse
+         */
+        function showOnlyContentSectionById(idToShow) {
+            const sections = document.querySelectorAll('.content-section');
+            sections.forEach(section => {
+                if (section.id === idToShow) {
+                    section.classList.add('active');
+                } else {
+                    section.classList.remove('active');
+                }
+            });
+        }
 
+        // ...existing code...
         const STORAGE_KEY = 'bitacoraGymRegistros';
         const ROUTINE_KEY = 'carlosBelcastRoutine';
         
@@ -584,7 +601,7 @@
 
         // Configuración de la API de Gemini
         const GEMINI_MODEL = 'gemini-2.5-flash-preview-09-2025';
-        const GEMINI_API_KEY = ""; 
+        const GEMINI_API_KEY = "AIzaSyBkuIS0qQ7ogHIT34rSqawHdcpc_F6YiGY"; 
         const GEMINI_BASE_URL = `https://generativelanguage.googleapis.com/v1beta/models/${GEMINI_MODEL}:generateContent?key=${GEMINI_API_KEY}`;
         
         const QNA_SYSTEM_INSTRUCTION = "Actúa como un entrenador personal y nutricionista amigable y experto. Tu objetivo es proporcionar consejos de fitness, responder preguntas sobre rutinas, ejercicios y nutrición. Responde siempre de manera concisa y útil.";
@@ -659,6 +676,7 @@
                     cargarRutinasPorDefecto(); 
                 }
             }
+            showOnlyContentSectionById(tabId);
         }
 
         // --- Funciones de Bitácora y Estado ---
