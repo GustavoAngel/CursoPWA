@@ -377,7 +377,7 @@
     </style>
 </head>
 <body>
-    <!-- <button id="btn5min">Notificar en 5 min</button> -->
+    <button id="btnNotificar">Programar notificación en 1 minuto</button>
 
     <div class="container" style="position:relative;">
         <h1>
@@ -533,21 +533,44 @@
     <script>
         // document.getElementById("btn5min").addEventListener("click", () => {
 
-        // Notification.requestPermission().then(permission => {
-        //     if (permission === "granted") {
-            
-        //     setTimeout(() => {
-        //         new Notification("¡Han pasado 1 minutos!", {
-        //         body: "¡Hora de continuar, SmartFit Bitácoras! 💪🔥",
-        //         icon: "./icons/icon-192.png"
-        //         });
-        //     }, 1 * 60 * 1000); // 5 minutos
+        // Registrar el Service Worker
+        // if ("serviceWorker" in navigator) {
+        // navigator.serviceWorker.register("./service-worker.js")
+        //     .then(reg => console.log("✅ Service Worker registrado:", reg))
+        //     .catch(err => console.error("❌ Error registrando SW:", err));
+        // }
 
-        //     alert("Notificación programada ✅1");
-        //     }
-        // });
+        // Función para pedir permiso y enviar la notificación
+        document.getElementById("btnNotificar").addEventListener("click", async () => {
+        // Solicita permiso si no está concedido
+        const permiso = await Notification.requestPermission();
+        if (permiso !== "granted") {
+            alert("Debes permitir las notificaciones para continuar.");
+            return;
+        }
 
-        // });
+        // Confirma que el SW esté listo
+        const reg = await navigator.serviceWorker.ready;
+
+        // Esperar 1 minuto y luego enviar una notificación
+        const delayMs = 60 * 1000;
+        alert("⏳ Notificación programada para 1 minuto.");
+
+        setTimeout(() => {
+            reg.showNotification("SmartFit Bitácora 💪", {
+            body: "Esta es tu notificación programada después de 1 minuto.",
+            icon: "./icons/icon-192.png",
+            badge: "./icons/icon-192.png",
+            vibrate: [200, 100, 200],
+            data: { url: "./" },
+            actions: [
+                { action: "open", title: "Abrir" },
+                { action: "close", title: "Cerrar" }
+            ]
+            });
+        }, delayMs);
+        });
+
 
                 if ("serviceWorker" in navigator) {
             navigator.serviceWorker.register("./service-worker.js");
@@ -1201,6 +1224,7 @@
         window.addEventListener('load', () => {
             checkOnlineStatus();
         });
+
     </script>
 </body>
 </html>

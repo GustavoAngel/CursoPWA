@@ -52,3 +52,20 @@ self.addEventListener("fetch", event => {
     })
   );
 });
+
+// Manejar  notificaciones
+self.addEventListener("notificationclick", event => {
+  event.notification.close();
+  if (event.action === "open" || !event.action) {
+    event.waitUntil(
+      clients.matchAll({ type: "window", includeUncontrolled: true }).then(windowClients => {
+        for (const client of windowClients) {
+          if (client.url.includes(event.notification.data.url)) {
+            return client.focus();
+          }
+        }
+        return clients.openWindow(event.notification.data.url);
+      })
+    );
+  }
+});
