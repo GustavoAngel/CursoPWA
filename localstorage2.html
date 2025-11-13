@@ -1,0 +1,234 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Demo LocalStorage: Lista de Productos Interactiva</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            padding: 20px;
+            background-color: #f4f4f9;
+        }
+        h1, h2 {
+            color: #333;
+            text-align: center;
+        }
+        /* Estilos del Formulario */
+        #formularioProducto {
+            background-color: #e9ecef;
+            padding: 15px;
+            border-radius: 8px;
+            margin: 20px auto;
+            max-width: 500px;
+            display: flex;
+            gap: 10px;
+            align-items: flex-end;
+        }
+        #formularioProducto label {
+            display: block;
+            font-weight: bold;
+            margin-bottom: 5px;
+        }
+        #formularioProducto input {
+            padding: 8px;
+            border: 1px solid #ccc;
+            border-radius: 4px;
+            width: 100%;
+        }
+        #formularioProducto button {
+            padding: 8px 15px;
+            background-color: #ffc107;
+            color: #333;
+            border: none;
+            border-radius: 4px;
+            cursor: pointer;
+            white-space: nowrap; /* Evita que el texto se rompa */
+        }
+        /* Estilos de Botones de Control */
+        .botones {
+            text-align: center;
+            margin-bottom: 20px;
+        }
+        .botones button {
+            padding: 10px 20px;
+            margin: 5px;
+            font-size: 16px;
+            cursor: pointer;
+            border: none;
+            border-radius: 5px;
+            color: white;
+        }
+        #cargarBoton { background-color: #28a745; }
+        #guardarBoton { background-color: #007bff; }
+        #limpiarBoton { background-color: #dc3545; }
+
+        /* Estilos de Cards (iguales al ejemplo anterior) */
+        .contenedor-productos {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 20px;
+            justify-content: center;
+            margin-top: 30px;
+        }
+        .card {
+            background-color: white;
+            border: 1px solid #ddd;
+            border-radius: 8px;
+            padding: 15px;
+            width: 200px;
+            box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
+            text-align: center;
+        }
+        .card h3 {
+            margin-top: 0;
+            color: #007bff;
+        }
+        .card p {
+            font-size: 1.1em;
+            font-weight: bold;
+            color: #28a745;
+        }
+    </style>
+</head>
+<body>
+
+    <h1>🛒 Gestión de Productos Interactiva</h1>
+    <p style="text-align: center;">Agrega, guarda y carga productos usando LocalStorage.</p>
+
+    <form id="formularioProducto">
+        <div>
+            <label for="nombre">Nombre:</label>
+            <input type="text" id="nombre" required>
+        </div>
+        <div>
+            <label for="precio">Precio:</label>
+            <input type="number" id="precio" min="0.01" step="0.01" required>
+        </div>
+        <button type="submit">Añadir Producto</button>
+    </form>
+    
+    <div class="botones">
+        <button id="cargarBoton">Cargar Productos</button>
+        <button id="guardarBoton">Guardar Productos</button>
+        <button id="limpiarBoton">Limpiar LocalStorage</button>
+    </div>
+    
+    <hr>
+
+    <h2>Productos:</h2>
+    <div id="productosContainer" class="contenedor-productos">
+        </div>
+
+    <script>
+        const CLAVE_PRODUCTOS = 'listaDeProductosInteractiva';
+        const productosContainer = document.getElementById('productosContainer');
+        const formulario = document.getElementById('formularioProducto');
+
+        // Variable global: siempre se inicializa como un array vacío
+        let productos = []; 
+
+        // --- FUNCIONES DE RENDERIZADO (Visualización) ---
+
+        function renderizarProductos() {
+            productosContainer.innerHTML = ''; // Limpia el contenedor
+            if (productos.length === 0) {
+                productosContainer.innerHTML = '<p style="text-align:center; width:100%; color: gray;">No hay productos. Usa el formulario para agregar uno o haz clic en "Cargar Productos".</p>';
+                return;
+            }
+            
+            productos.forEach(producto => {
+                const card = document.createElement('div');
+                card.classList.add('card');
+                card.innerHTML = `
+                    <h3>${producto.nombre}</h3>
+                    <p>Precio: $${producto.precio.toFixed(2)}</p>
+                    <small>ID: ${producto.id}</small>
+                `;
+                productosContainer.appendChild(card);
+            });
+        }
+
+        // --- FUNCIÓN PARA AGREGAR PRODUCTO ---
+
+        function agregarProducto(event) {
+            event.preventDefault(); // Evita que el formulario recargue la página
+
+            const nombreInput = document.getElementById('nombre');
+            const precioInput = document.getElementById('precio');
+            
+            // Generar un ID simple y único (ej: timestamp)
+            const nuevoId = Date.now(); 
+
+            const nuevoProducto = {
+                id: nuevoId,
+                nombre: nombreInput.value,
+                // Usamos parseFloat para asegurar que el precio es un número
+                precio: parseFloat(precioInput.value) 
+            };
+
+            // Agregar el nuevo producto al array global
+            productos.push(nuevoProducto);
+
+            // Actualizar la interfaz y guardar automáticamente (opcional, pero buena práctica)
+            renderizarProductos();
+            
+            // Limpiar el formulario
+            formulario.reset(); 
+            
+            // Sugerir guardar
+            alert('Producto añadido a la lista. ¡No olvides hacer clic en "Guardar Productos" para que persista!');
+        }
+
+
+
+        function guardarProductos() {
+            // Serializar: Convertir el array a cadena JSON
+            const productosJSON = JSON.stringify(productos);
+            
+            // Almacenar
+            localStorage.setItem(CLAVE_PRODUCTOS, productosJSON);
+            alert('¡Lista de productos guardada en LocalStorage!');
+        }
+
+        function cargarProductos() {
+            // Recuperar la cadena JSON guardada
+            const productosGuardados = localStorage.getItem(CLAVE_PRODUCTOS);
+            
+            if (productosGuardados) {
+                // Deserializar: Convertir la cadena JSON de vuelta a un array de objetos
+                productos = JSON.parse(productosGuardados);
+                alert('¡Lista de productos cargada desde LocalStorage!');
+            } else {
+                // Si no hay datos guardados, el array sigue siendo vacío
+                productos = [];
+                alert('No se encontraron datos guardados. La lista está vacía.');
+            }
+            
+            // Renderizar la lista cargada (o vacía)
+            renderizarProductos();
+        }
+
+        function limpiarLocalStorage() {
+            // Elimina el ítem específico
+            localStorage.removeItem(CLAVE_PRODUCTOS); 
+            // Vuelve a usar la lista vacía
+            productos = []; 
+            
+            alert('LocalStorage limpiado para la lista de productos. La lista en pantalla se ha vaciado.');
+            renderizarProductos();
+        }
+
+        // --- ASIGNACIÓN DE EVENTOS Y LLAMADA INICIAL ---
+
+        formulario.addEventListener('submit', agregarProducto);
+        document.getElementById('cargarBoton').addEventListener('click', cargarProductos);
+        document.getElementById('guardarBoton').addEventListener('click', guardarProductos);
+        document.getElementById('limpiarBoton').addEventListener('click', limpiarLocalStorage);
+
+        // Al iniciar, intentamos cargar cualquier dato guardado para que la persistencia sea visible inmediatamente
+        cargarProductos(); 
+    </script>
+
+</body>
+</html>

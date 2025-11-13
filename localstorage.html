@@ -1,0 +1,102 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>LocalStorage Demo para el Curso</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            text-align: center;
+            padding: 50px;
+        }
+        button {
+            padding: 10px 20px;
+            font-size: 16px;
+            cursor: pointer;
+            background-color: #007bff;
+            color: white;
+            border: none;
+            border-radius: 5px;
+            margin-top: 20px;
+        }
+        #contador {
+            font-size: 2em;
+            font-weight: bold;
+            color: #28a745;
+        }
+    </style>
+</head>
+<body>
+
+    <h1>💾 Contador Persistente con LocalStorage</h1>
+    <p>Haz clic en el botón para incrementar el contador.</p>
+    <p>**Intenta recargar la página; el número no se perderá.**</p>
+
+    <div id="contador">0</div>
+
+    <button id="botonLocalStorage">
+        ¡Contar y Guardar!
+    </button>
+
+    <button id="limpiarBoton">
+        Limpiar LocalStorage
+    </button>
+
+    <script>
+        // Clave que usaremos en LocalStorage
+        const CLAVE_CONTADOR = 'miContadorDeClics';
+        
+        // Elementos del DOM
+        const contadorElemento = document.getElementById('contador');
+        const boton = document.getElementById('botonLocalStorage');
+        const limpiarBoton = document.getElementById('limpiarBoton');
+
+        // --- 1. CARGAR DATOS AL INICIO ---
+        function cargarContador() {
+            // Intentar obtener el valor de LocalStorage
+            const contadorGuardado = localStorage.getItem(CLAVE_CONTADOR);
+            
+            // Si hay un valor, lo usamos (lo convertimos a número con Number())
+            // Si no hay valor (es null), iniciamos en 0
+            let valorContador = contadorGuardado ? Number(contadorGuardado) : 0;
+            
+            // Mostrar el valor en la pantalla
+            contadorElemento.textContent = valorContador;
+        }
+
+        // --- 2. FUNCIÓN PARA INCREMENTAR Y GUARDAR ---
+        function incrementarYGuardar() {
+            // 1. Obtener el valor actual (como texto de la pantalla o de la carga inicial)
+            let valorActual = Number(contadorElemento.textContent);
+
+            // 2. Incrementar el contador
+            valorActual++;
+
+            // 3. ACTUALIZAR LocalStorage: Convertir el número de vuelta a string antes de guardar
+            localStorage.setItem(CLAVE_CONTADOR, String(valorActual));
+
+            // 4. Actualizar la pantalla
+            contadorElemento.textContent = valorActual;
+        }
+
+        // --- 3. FUNCIÓN PARA LIMPIAR ---
+        function limpiarTodo() {
+            // Elimina el ítem específico
+            localStorage.removeItem(CLAVE_CONTADOR); 
+            // Opcional: localStorage.clear(); para eliminar todo
+            
+            alert('LocalStorage limpiado. El contador se reiniciará a 0.');
+            cargarContador(); // Vuelve a cargar el contador (que ahora será 0)
+        }
+        
+        // --- ASIGNAR EVENTOS ---
+        boton.addEventListener('click', incrementarYGuardar);
+        limpiarBoton.addEventListener('click', limpiarTodo);
+
+        // Llama a la función de carga al iniciar la página
+        cargarContador(); 
+    </script>
+
+</body>
+</html>

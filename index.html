@@ -394,7 +394,7 @@
     </style>
 </head>
 <body>
-    <button id="btn5min">Notificar en 5 min</button>
+    <!-- <button id="btn5min">Notificar en 5 min</button> -->
 
     <div class="container">
         <h1>
@@ -1053,7 +1053,7 @@
             try {
                 const response = await exponentialBackoffFetch(GEMINI_BASE_URL, options);
                 const result = await response.json();
-                
+                console.log("Respuesta de Gemini para rutina estructurada:", result);
                 const jsonText = result.candidates?.[0]?.content?.parts?.[0]?.text;
 
                 if (jsonText) {
