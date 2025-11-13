@@ -1,4 +1,3 @@
-// Nombre del caché (cámbialo cuando actualices tu app)
 const CACHE_NAME = "smartfit-bitacora-v1";
 
 // Archivos a cachear
