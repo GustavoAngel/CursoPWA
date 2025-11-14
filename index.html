@@ -377,7 +377,6 @@
     </style>
 </head>
 <body>
-    <!-- <button id="btn5min">Notificar en 5 min</button> -->
 
     <div class="container" style="position:relative;">
         <h1>
@@ -417,7 +416,7 @@
             
             
 
-<div style="margin-bottom: 25px; padding: 15px; border: 1px dashed #ffd700; border-radius: 8px;">
+<div style="margin-bottom: 25px;display: none; padding: 15px; border: 1px dashed #ffd700; border-radius: 8px;">
                 <label for="fitness-idol" style="display: block; font-weight: bold; margin-bottom: 10px;">
                     Selecciona tu Inspiración Semanal:
                 </label>
@@ -531,25 +530,8 @@
 
 
     <script>
-        // document.getElementById("btn5min").addEventListener("click", () => {
 
-        // Notification.requestPermission().then(permission => {
-        //     if (permission === "granted") {
-            
-        //     setTimeout(() => {
-        //         new Notification("¡Han pasado 1 minutos!", {
-        //         body: "¡Hora de continuar, SmartFit Bitácoras! 💪🔥",
-        //         icon: "./icons/icon-192.png"
-        //         });
-        //     }, 1 * 60 * 1000); // 5 minutos
-
-        //     alert("Notificación programada ✅1");
-        //     }
-        // });
-
-        // });
-
-                if ("serviceWorker" in navigator) {
+        if ("serviceWorker" in navigator) {
             navigator.serviceWorker.register("./service-worker.js");
         }
         // --- CONFIGURACIÓN Y CONSTANTES ---
@@ -920,7 +902,7 @@
         const GEMINI_MODEL = 'gemini-2.5-flash-preview-09-2025';
         const GEMINI_API_KEY = "AIzaSyBkuIS0qQ7ogHIT34rSqawHdcpc_F6YiGY"; 
         const GEMINI_BASE_URL = `https://generativelanguage.googleapis.com/v1beta/models/${GEMINI_MODEL}:generateContent?key=${GEMINI_API_KEY}`;
-        
+
         const QNA_SYSTEM_INSTRUCTION = "Actúa como un entrenador personal y nutricionista amigable y experto. Tu objetivo es proporcionar consejos de fitness, responder preguntas sobre rutinas, ejercicios y nutrición. Responde siempre de manera concisa y útil.";
         
         const ROUTINE_SYSTEM_INSTRUCTION = "Eres un generador de rutinas de fitness profesional. Crea una lista de 3 a 5 ejercicios efectivos para el enfoque muscular solicitado. Para cada ejercicio, proporciona un nombre, el número de series sugeridas ('3', '4', etc.) y el rango de repeticiones sugeridas ('8-12', '10-15', etc.). DEBES RESPONDER ÚNICAMENTE CON EL ARRAY JSON SOLICITADO, sin texto adicional.";
