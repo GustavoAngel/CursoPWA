@@ -409,101 +409,91 @@
             </div>
         </div>
 
-        
+        <div id="planeacion-tab" class="content-section">
+                    <h2 style="display: none;" id="planeacion-main-title">📋 Mi Planeación Semanal</h2>
+                    <button id="ResetButton" class="action-button register-button">Reiniciar entrenamiento </button>
+                    
 
-<div id="planeacion-tab" class="content-section">
-            <h2 id="planeacion-main-title">📋 Mi Planeación Semanal</h2>
-            
-            
+        <div style="margin-bottom: 25px;display: none; padding: 15px; border: 1px dashed #ffd700; border-radius: 8px;">
+                        <label for="fitness-idol" style="display: block; font-weight: bold; margin-bottom: 10px;">
+                            Selecciona tu Inspiración Semanal:
+                        </label>
+                        <select id="fitness-idol" style="width: 100%; padding: 10px; border-radius: 4px; border: 1px solid #555; margin-bottom: 10px; font-size: 16px; background-color: #3a3a3a; color: #e0e0e0;">
+                            <option value="" disabled selected>Selecciona un ídolo fitness</option>
+                            <option value="Carlos Belcast">Carlos Belcast (Fuerza)</option>
+                            <option value="Andoni Fitness">Andoni Fitness (Powerbuilding/Fuerza)</option>
+                            <option value="Joan Pradells">Joan Pradells (Bodybuilding)</option>
+                            <option value="The Saiyan Kiwi">The Saiyan Kiwi (Fuerza/Estética)</option>
+                            <option value="Vikika Costa">Vikika Costa (Glúteo/Funcional)</option>
+                        </select>
+                        
+                        <button onclick="descargarRutinaSeleccionada()" id="descarga-btn" class="action-button gemini-button" style="margin-top: 10px;">
+                            Descargar Rutina Seleccionada
+                        </button>
+                    </div>
 
-<div style="margin-bottom: 25px;display: none; padding: 15px; border: 1px dashed #ffd700; border-radius: 8px;">
-                <label for="fitness-idol" style="display: block; font-weight: bold; margin-bottom: 10px;">
-                    Selecciona tu Inspiración Semanal:
-                </label>
-                <select id="fitness-idol" style="width: 100%; padding: 10px; border-radius: 4px; border: 1px solid #555; margin-bottom: 10px; font-size: 16px; background-color: #3a3a3a; color: #e0e0e0;">
-                    <option value="" disabled selected>Selecciona un ídolo fitness</option>
-                    <option value="Carlos Belcast">Carlos Belcast (Fuerza)</option>
-                    <option value="Andoni Fitness">Andoni Fitness (Powerbuilding/Fuerza)</option>
-                    <option value="Joan Pradells">Joan Pradells (Bodybuilding)</option>
-                    <option value="The Saiyan Kiwi">The Saiyan Kiwi (Fuerza/Estética)</option>
-                    <option value="Vikika Costa">Vikika Costa (Glúteo/Funcional)</option>
-                </select>
-                
-                <button onclick="descargarRutinaSeleccionada()" id="descarga-btn" class="action-button gemini-button" style="margin-top: 10px;">
-                    Descargar Rutina Seleccionada
-                </button>
-            </div>
+                    
 
-            
+        <div id="daily-routine-container">
+                        <h3 id="current-day-title">Rutina del Día: Cargando...</h3>
+                        <div id="daily-routine-content" class="card-grid">
+                            <p class="p-message">Cargando rutina o día de descanso.</p>
+                        </div>
+                    </div>
 
-<div id="daily-routine-container">
-                <h3 id="current-day-title">Rutina del Día: Cargando...</h3>
-                <div id="daily-routine-content" class="card-grid">
-                    <p class="p-message">Cargando rutina o día de descanso.</p>
+                    
+
+        <h3 style="margin-top: 30px;">Planeación Semanal Resumida</h3>
+                    <div id="weekly-overview-cards" class="card-grid">
+                        
+
+        </div>
+                    
+                    <p id="routine-note" style="margin-top: 20px; font-style: italic; color: #a0a0a0;"></p>
+                </div>
+
+        <div id="bitacora-tab" class="content-section">
+                    <h2>📜 Historial de Sesiones</h2>
+                    <ul id="bitacora-list" style="color: #e0e0e0;">
+                        
+
+        </ul>
+                </div>
+
+        <div id="gemini-tab" class="content-section">
+                    <h2>✨ Pregunta a Gemini (Fitness Coach)</h2>
+                    <p>Obtén consejos de entrenamiento, nutrición o información sobre ejercicios específicos. ¡Pregunta lo que necesites!</p>
+                    
+                    <textarea id="gemini-input" placeholder="Ej: ¿Cuáles son 3 ejercicios para mejorar la sentadilla profunda?" onkeydown="if(event.key === 'Enter' && !event.shiftKey) { event.preventDefault(); askGemini(); }"></textarea>
+                    <button onclick="askGemini()" class="action-button gemini-button">
+                        Enviar Pregunta
+                    </button>
+                    
+                    <h3>Respuesta</h3>
+                    <div id="gemini-response-area">
+                        <p class="p-message">Las respuestas aparecerán aquí. ¡Pregúntame algo!</p>
+                    </div>
+                </div>
+
+        <div id="coach-ia-tab" class="content-section">
+                    <h2>🧠 Coach IA: Generar Rutina Rápida</h2>
+                    <p>Solicita una rutina de ejercicios personalizada para un grupo muscular o enfoque específico. Se agregará a tu plan del día.</p>
+                    
+                    <div>
+                        <label for="muscle-group">Grupo Muscular o Enfoque:</label>
+                        <input type="text" id="muscle-group" placeholder="Ej: Pecho y Tríceps, o solo Glúteos">
+                    </div>
+
+                    <button onclick="generateRoutine()" class="action-button coach-button">
+                        Generar y Agregar a la Rutina de Hoy
+                    </button>
+                    
+                    <h3>Estado</h3>
+                    <div id="coach-status-area">
+                        <p class="p-message">Ingresa tu enfoque muscular y haz clic en "Generar".</p>
+                    </div>
                 </div>
             </div>
-
-            
-
-<h3 style="margin-top: 30px;">Planeación Semanal Resumida</h3>
-            <div id="weekly-overview-cards" class="card-grid">
-                
-
-</div>
-            
-            <p id="routine-note" style="margin-top: 20px; font-style: italic; color: #a0a0a0;"></p>
-        </div>
-
-        
-
-<div id="bitacora-tab" class="content-section">
-            <h2>📜 Historial de Sesiones</h2>
-            <ul id="bitacora-list" style="color: #e0e0e0;">
-                
-
-</ul>
-        </div>
-        
-        
-
-<div id="gemini-tab" class="content-section">
-            <h2>✨ Pregunta a Gemini (Fitness Coach)</h2>
-            <p>Obtén consejos de entrenamiento, nutrición o información sobre ejercicios específicos. ¡Pregunta lo que necesites!</p>
-            
-            <textarea id="gemini-input" placeholder="Ej: ¿Cuáles son 3 ejercicios para mejorar la sentadilla profunda?" onkeydown="if(event.key === 'Enter' && !event.shiftKey) { event.preventDefault(); askGemini(); }"></textarea>
-            <button onclick="askGemini()" class="action-button gemini-button">
-                Enviar Pregunta
-            </button>
-            
-            <h3>Respuesta</h3>
-            <div id="gemini-response-area">
-                <p class="p-message">Las respuestas aparecerán aquí. ¡Pregúntame algo!</p>
-            </div>
-        </div>
-
-        
-
-<div id="coach-ia-tab" class="content-section">
-            <h2>🧠 Coach IA: Generar Rutina Rápida</h2>
-            <p>Solicita una rutina de ejercicios personalizada para un grupo muscular o enfoque específico. Se agregará a tu plan del día.</p>
-            
-            <div>
-                <label for="muscle-group">Grupo Muscular o Enfoque:</label>
-                <input type="text" id="muscle-group" placeholder="Ej: Pecho y Tríceps, o solo Glúteos">
-            </div>
-
-            <button onclick="generateRoutine()" class="action-button coach-button">
-                Generar y Agregar a la Rutina de Hoy
-            </button>
-            
-            <h3>Estado</h3>
-            <div id="coach-status-area">
-                <p class="p-message">Ingresa tu enfoque muscular y haz clic en "Generar".</p>
-            </div>
-        </div>
-    </div>
-
-    
 
 <nav class="nav-bar">
         <button class="nav-button active" onclick="showTab('registrar-tab', this)">
@@ -534,6 +524,21 @@
         if ("serviceWorker" in navigator) {
             navigator.serviceWorker.register("./service-worker.js");
         }
+
+
+        document.getElementById('ResetButton').addEventListener('click', function() {
+            if (confirm('¿Estás seguro de que deseas reiniciar tu entrenamiento? Esto eliminará la rutina actual.')) {
+                document.querySelectorAll('input[type="checkbox"]').forEach(c => {
+                c.checked = false;
+                });
+                
+                // También eliminar estados de completion guardados (para evitar datos huérfanos)
+                Object.keys(localStorage)
+                    .filter(k => k.startsWith('ROUTINE_COMPLETION_'))
+                    .forEach(k => localStorage.removeItem(k));
+                    }
+        });
+
         // --- CONFIGURACIÓN Y CONSTANTES ---
                 // ...existing code...
         /**
@@ -594,6 +599,7 @@
 
         // Función de navegación: Muestra la pestaña seleccionada
         function showTab(tabId, buttonElement) {
+            console.log(`Navegando a la pestaña: ${tabId}`);
             // Oculta todos los divs de contenido quitando la clase 'active'
             document.querySelectorAll('.content-section').forEach(section => {
                 section.classList.remove('active');
@@ -621,6 +627,11 @@
                 }
             }
             showOnlyContentSectionById(tabId);
+
+            document.querySelectorAll('.content-section').forEach(c => {
+                 c.style.display = "none";
+            });
+            document.getElementById(tabId).style.display = "block";
         }
 
         // --- Funciones de Bitácora y Estado ---
@@ -900,7 +911,7 @@
 
         // Configuración de la API de Gemini
         const GEMINI_MODEL = 'gemini-2.5-flash-preview-09-2025';
-        const GEMINI_API_KEY = "AIzaSyBkuIS0qQ7ogHIT34rSqawHdcpc_F6YiGY"; 
+        const GEMINI_API_KEY = "AIzaSyB5bWXrGYzj59xyZEdx_CfcTOOxEyvaQxU"; 
         const GEMINI_BASE_URL = `https://generativelanguage.googleapis.com/v1beta/models/${GEMINI_MODEL}:generateContent?key=${GEMINI_API_KEY}`;
 
         const QNA_SYSTEM_INSTRUCTION = "Actúa como un entrenador personal y nutricionista amigable y experto. Tu objetivo es proporcionar consejos de fitness, responder preguntas sobre rutinas, ejercicios y nutrición. Responde siempre de manera concisa y útil.";
