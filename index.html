@@ -391,7 +391,7 @@
         </h1>
 
         <!-- Indicador de conexión -->
-        <div id="online-indicator" title="Estado de la conexión">
+        <div id="online-indicator" style="display: none;" title="Estado de la conexión">
             <span class="dot"></span>
             <span id="online-text">Verificando...</span>
         </div>
@@ -536,7 +536,12 @@
             <button class="modal-close" onclick="hideCustomModal()">&times;</button>
             <h3 id="modal-title"></h3>
             <p id="modal-message"></p>
-            <button class="action-button modal-confirm-button" onclick="hideCustomModal()">Aceptar</button>
+            <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 10px; margin-top: 20px; justify-items: center;">
+                <button class="action-button modal-confirm-button" onclick="hideCustomModal()">Aceptar</button>
+                <button class="action-button modal-cancel-button" onclick="hideCustomModal()">Cancelar</button>
+
+            </div>
+
         </div>
     </div>
     <script src="app.js"></script>
@@ -548,16 +553,19 @@
 
 
         document.getElementById('ResetButton').addEventListener('click', function() {
-            if (confirm('¿Estás seguro de que deseas reiniciar tu entrenamiento? Esto eliminará la rutina actual.')) {
-                document.querySelectorAll('input[type="checkbox"]').forEach(c => {
-                c.checked = false;
-                });
-                
-                // También eliminar estados de completion guardados (para evitar datos huérfanos)
-                Object.keys(localStorage)
-                    .filter(k => k.startsWith('ROUTINE_COMPLETION_'))
-                    .forEach(k => localStorage.removeItem(k));
+        showCustomModal('Reiniciar Entrenamiento', '¿Estás seguro de que deseas reiniciar tu entrenamiento? Esto eliminará la rutina actual.', 'confirm', function(confirmed) {
+            if (confirmed) {        
+                    document.querySelectorAll('input[type="checkbox"]').forEach(c => {
+                        c.checked = false;
+                    });
+                    
+                    // También eliminar estados de completion guardados (para evitar datos huérfanos)
+                    Object.keys(localStorage)
+                        .filter(k => k.startsWith('ROUTINE_COMPLETION_'))
+                        .forEach(k => localStorage.removeItem(k));
                     }
+                
+            });
         });
 
         // --- CONFIGURACIÓN Y CONSTANTES ---
