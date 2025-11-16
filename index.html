@@ -390,7 +390,7 @@
             <span id="online-text">Verificando...</span>
         </div>
 
-        <div id="registrar-tab" class="content-section active">
+        <div id="registrar-tab" class="content-section ">
             <h2>📝 Registrar Sesión</h2>
             <div class="registro-form">
                 <div>
@@ -405,11 +405,12 @@
                     <label for="comentarios">Detalles / Comentarios:</label>
                     <textarea id="comentarios" rows="5" placeholder="Ej: 3 series de 10 repeticiones en press de banca. Me sentí fuerte."></textarea>
                 </div>
+                <div style="align-self: flex-end;" id="progreso-global">Progreso: 0%</div>
                 <button onclick="registrarSesion()" class="action-button register-button">Guardar Sesión</button>
             </div>
         </div>
 
-        <div id="planeacion-tab" class="content-section">
+        <div id="planeacion-tab" class="content-section active">
                     <h2 style="display: none;" id="planeacion-main-title">📋 Mi Planeación Semanal</h2>
                     
                     
@@ -706,10 +707,10 @@
             const today = new Date().toISOString().slice(0, 10); // YYYY-MM-DD
             return `ROUTINE_COMPLETION_${today}_${routine.semana || 'Custom'}`;
         }
-        
+        var progresoPorcentaje = 0;
         window.toggleSeriesCompletion = function(checkbox, completionKey) {
             let completionState = JSON.parse(localStorage.getItem(completionKey)) || {};
-            
+            console.log('Checkbox cambiado:', checkbox);
             const exerciseIndex = checkbox.getAttribute('data-exercise-index');
             const seriesNum = checkbox.getAttribute('data-series-num');
             const uniqueId = `e${exerciseIndex}s${seriesNum}`; // Clave única simplificada
@@ -717,9 +718,29 @@
             completionState[uniqueId] = checkbox.checked;
 
             localStorage.setItem(completionKey, JSON.stringify(completionState));
+
+             calcularPorcentaje();
+            //console.log(`Progreso: ${porcentaje}% (${checkedCheckboxes}/${totalCheckboxes})`);
         }
 
+        function calcularPorcentaje() {
+               // === Calcular porcentaje de checkboxes marcados ===
+            const totalCheckboxes = document.querySelectorAll('[data-exercise-index][data-series-num]').length;
+            const checkedCheckboxes = document.querySelectorAll('[data-exercise-index][data-series-num]:checked').length;
 
+            const porcentaje = totalCheckboxes > 0 
+                ? Math.round((checkedCheckboxes / totalCheckboxes) * 100)
+                : 0;
+            progresoPorcentaje = porcentaje;
+                // === Mostrar el porcentaje en pantalla ===
+                const etiqueta = document.getElementById('progreso-global');
+                if (etiqueta) {
+                    etiqueta.textContent = `Progreso: ${porcentaje}%`;
+                }
+        }
+        
+        calcularPorcentaje(); // Llamada inicial para mostrar el progreso al cargar
+        
         // Carga la rutina del día en el formato de cards con checkboxes
         function cargarRutinaDelDia(diaHoy, routineData) {
             const dailyContent = document.getElementById('daily-routine-content');
