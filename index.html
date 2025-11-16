@@ -690,15 +690,30 @@
                 const nuevoRegistro = document.createElement('li');
                 nuevoRegistro.className = 'bitacora-card';
                 
-                // Formatear el contenido de la card
+                if (registro.progreso) {
+                    // Formatear el contenido de la card
                 nuevoRegistro.innerHTML = `
                     <div class="bitacora-header">
                         <p class="day-label">${registro.diaSemana}</p>
                         <p class="">${registro.fecha}</p>
                     </div>
                     <p>${registro.comentarios}</p>
-                    <p>Progreso: ${registro.progreso}% ✅</p>
+                    <!-- BARRA DE PROGRESO -->
+                    <div class="bitacora-progress">
+                        <div class="bitacora-progress-fill" style="width: ${registro.progreso}%;" data-percentage="${registro.progreso}%"></div>
+                    </div>
+                    
                 `;
+                } else {
+                    nuevoRegistro.innerHTML = `
+                    <div class="bitacora-header">
+                        <p class="day-label">${registro.diaSemana}</p>
+                        <p class="">${registro.fecha}</p>
+                    </div>
+                    <p>${registro.comentarios}</p>
+                `;
+                }
+                
                 bitacoraList.appendChild(nuevoRegistro); 
             });
         }

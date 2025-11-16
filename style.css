@@ -229,3 +229,34 @@
             color: #e0e0e0;
             white-space: pre-wrap; /* Para respetar saltos de línea del textarea */
         }
+/* --- FIN ESTILOS BITÁCORA --- */
+
+/* --- ESTILOS PARA LA BARRA DE PROGRESO --- */
+        .bitacora-progress {
+            background-color: #555; /* Fondo del track de la barra */
+            height: 12px;
+            border-radius: 6px;
+            margin-top: 10px;
+            overflow: hidden; /* Importante para que el fill no se desborde */
+        }
+
+        .bitacora-progress-fill {
+            height: 100%;
+            background-color: #ffd700; /* Color verde para el progreso */
+            /* Transición para que se vea bien al cargar si fuera dinámico */
+            transition: width 0.6s ease-out; 
+            border-radius: 6px;
+            position: relative; /* Necesario para el texto de porcentaje */
+        }
+        .bitacora-progress-fill::after {
+            content: attr(data-percentage); /* Usa el atributo data-percentage para mostrar el texto */
+            position: absolute;
+            right: 5px;
+            top: 50%;
+            transform: translateY(-50%);
+            font-size: 10px;
+            font-weight: bold;
+            color: white; 
+            text-shadow: 0 0 2px rgba(0, 0, 0, 0.5);
+        }
+/* --- FIN ESTILOS BARRA DE PROGRESO --- */
