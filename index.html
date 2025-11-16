@@ -5,6 +5,7 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <link rel="icon" type="image/x-icon" href="./icons/favicon.ico">
     <link rel="manifest" href="./manifest.json">
+    <link rel="stylesheet" href="./style.css">
     <meta name="theme-color" content="#0099ff">
     <title>Bitácora Semanal de Gimnasio - App</title>
     <style>
@@ -377,7 +378,11 @@
     </style>
 </head>
 <body>
-
+                <button onclick="showCustomModal('¡Hola Entrenador!', '¡Bienvenido a tu bitácora Smart Fit! Usa este modal para mensajes importantes o confirmaciones.')" 
+                    class="action-button gemini-button" 
+                    style="background-color: #5d5d5d; color: white;">
+                    Saludar Modal
+                </button>
     <div class="container" style="position:relative;">
         <h1>
             <span id="smart-word">SMART</span>
@@ -519,7 +524,16 @@
         </button>
     </nav>
 
-
+       <!-- Custom Alert/Confirmation Modal -->
+    <div id="custom-modal-overlay" class="modal-overlay" onclick="hideCustomModal()">
+        <div id="custom-modal-content" class="modal-content" onclick="event.stopPropagation()">
+            <button class="modal-close" onclick="hideCustomModal()">&times;</button>
+            <h3 id="modal-title"></h3>
+            <p id="modal-message"></p>
+            <button class="action-button modal-confirm-button" onclick="hideCustomModal()">Aceptar</button>
+        </div>
+    </div>
+    <script src="app.js"></script>
     <script>
 
         if ("serviceWorker" in navigator) {
@@ -718,7 +732,7 @@
             completionState[uniqueId] = checkbox.checked;
 
             localStorage.setItem(completionKey, JSON.stringify(completionState));
-
+            console.log('Estado de finalización actualizado:', completionKey);
              calcularPorcentaje();
             //console.log(`Progreso: ${porcentaje}% (${checkedCheckboxes}/${totalCheckboxes})`);
         }
@@ -732,6 +746,10 @@
                 ? Math.round((checkedCheckboxes / totalCheckboxes) * 100)
                 : 0;
             progresoPorcentaje = porcentaje;
+
+            if (porcentaje == 100) {
+                alert("¡Felicidades! Has completado toda la rutina del día. 🎉");
+            }
                 // === Mostrar el porcentaje en pantalla ===
                 const etiqueta = document.getElementById('progreso-global');
                 if (etiqueta) {
@@ -740,7 +758,7 @@
         }
         
         calcularPorcentaje(); // Llamada inicial para mostrar el progreso al cargar
-        
+
         // Carga la rutina del día en el formato de cards con checkboxes
         function cargarRutinaDelDia(diaHoy, routineData) {
             const dailyContent = document.getElementById('daily-routine-content');
