@@ -416,7 +416,7 @@
             </div>
         </div>
 
-        <div id="planeacion-tab" class="content-section active">
+        <div id="planeacion-tab" class="content-section">
                     <h2 style="display: none;" id="planeacion-main-title">📋 Mi Planeación Semanal</h2>
                     
                     
@@ -464,7 +464,7 @@
                     <p id="routine-note" style="margin-top: 20px; font-style: italic; color: #a0a0a0;"></p>
                 </div>
 
-        <div id="bitacora-tab" class="content-section">
+        <div id="bitacora-tab" class="content-section active">
                     <h2>📜 Historial de Sesiones</h2>
                     <ul id="bitacora-list" style="color: #e0e0e0;">
                         
@@ -681,19 +681,28 @@
             bitacoraList.innerHTML = ''; 
             
             if (registros.length === 0) {
-                bitacoraList.innerHTML = '<li style="color: #a0a0a0;"><strong>¡Empecemos!</strong> Aún no tienes sesiones registradas.</li>';
+                bitacoraList.innerHTML = '<li style="color: #a0a0a0; text-align: center; padding: 20px;"><strong>¡Empecemos!</strong> Aún no tienes sesiones registradas.</li>';
                 return;
             }
 
+            // Invertir el orden para mostrar el más reciente primero
             registros.slice().reverse().forEach(registro => {
                 const nuevoRegistro = document.createElement('li');
+                nuevoRegistro.className = 'bitacora-card';
+                
+                // Formatear el contenido de la card
                 nuevoRegistro.innerHTML = `
-                    <strong>${registro.diaSemana} - ${registro.fecha}</strong>
+                    <div class="bitacora-header">
+                        <p class="day-label">${registro.diaSemana}</p>
+                        <p class="">${registro.fecha}</p>
+                    </div>
                     <p>${registro.comentarios}</p>
+                    <p>Progreso: ${registro.progreso}% ✅</p>
                 `;
                 bitacoraList.appendChild(nuevoRegistro); 
             });
         }
+
 
         function cargarBitacoraGuardada() {
             const registrosJSON = localStorage.getItem(STORAGE_KEY);
@@ -705,16 +714,28 @@
             const fecha = document.getElementById('fecha').value;
             const diaSemana = document.getElementById('dia-semana').value;
             const comentarios = document.getElementById('comentarios').value;
-            
-            if (!comentarios.trim()) {
-                console.error("Por favor, ingresa los detalles de tu sesión.");
+            calcularPorcentaje();
+            const progreso = progresoPorcentaje;
+            if (progreso === 0 || !comentarios.trim()) {
+                let mensaje = "";
+
+                if (progreso === 0) {
+                    mensaje += "Parece que no has completado ninguna serie en tu rutina de hoy. ";
+                }
+
+                if (!comentarios.trim()) {
+                    mensaje += "Por favor, ingresa los detalles de tu sesión.";
+                }
+
+                showCustomModal('Atención', mensaje.trim(), 'alert');
                 return;
             }
             
             const nuevoRegistro = {
                 fecha: fecha,
                 diaSemana: diaSemana,
-                comentarios: comentarios.trim()
+                comentarios: comentarios.trim(),
+                progreso: progreso
             };
 
             const registrosJSON = localStorage.getItem(STORAGE_KEY);
@@ -946,7 +967,7 @@
                 if (!routineData.semana) {
                     routineData.semana = `Rutina de ${selectedIdol}`;
                 }
-
+                console.log('Rutina descargada:', routineData);
                 localStorage.setItem(ROUTINE_KEY, JSON.stringify(routineData));
                 cargarRutinaEnAmbasTablas(routineData);
 

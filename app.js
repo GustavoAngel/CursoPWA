@@ -10,13 +10,17 @@
                     callback(true);
                 };
             } else if (type === 'alert' && callback) {
-                const confirmButton = document.querySelector('.modal-confirm-button');
+                const confirmButton = document.querySelector('.modal-cancel-button');
                 confirmButton.onclick = function() {
                     hideCustomModal();
                     callback();
                 };
             }
-            
+            else if (type === 'alert') {
+                const cancelbutton = document.querySelector('.modal-confirm-button');
+                cancelbutton.display = 'none';
+            }
+
         }
 
         function hideCustomModal() {
