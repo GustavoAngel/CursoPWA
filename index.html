@@ -378,11 +378,12 @@
     </style>
 </head>
 <body>
-                <button onclick="showCustomModal('¡Hola Entrenador!', '¡Bienvenido a tu bitácora Smart Fit! Usa este modal para mensajes importantes o confirmaciones.')" 
+                <!-- <button onclick="showCustomModal('¡Hola Entrenador!', '¡Bienvenido a tu bitácora Smart Fit! Usa este modal para mensajes importantes o confirmaciones.')" 
                     class="action-button gemini-button" 
                     style="background-color: #5d5d5d; color: white;">
                     Saludar Modal
-                </button>
+                </button> -->
+
     <div class="container" style="position:relative;">
         <h1>
             <span id="smart-word">SMART</span>
@@ -445,7 +446,12 @@
                             <p class="p-message">Cargando rutina o día de descanso.</p>
                         </div>
                     </div>
-                    <button id="ResetButton" class="action-button register-button">Reiniciar entrenamiento </button>
+                    <div style="display: grid; grid-template-columns: 2fr 1fr; gap: 10px; margin-top: 20px;">
+                        <button id="EndTrain" class="action-button register-button">Finalizar entrenamiento</button>
+                        <button id="ResetButton"
+                        style="background-color: #5d5d5d; color: white;"
+                         class="action-button gemini-button">Reiniciar entrenamiento </button>
+                    </div>
 
                     
 
@@ -748,7 +754,7 @@
             progresoPorcentaje = porcentaje;
 
             if (porcentaje == 100) {
-                alert("¡Felicidades! Has completado toda la rutina del día. 🎉");
+                showCustomModal('¡Felicidades!', '¡Has completado toda la rutina del día. 🎉.!');
             }
                 // === Mostrar el porcentaje en pantalla ===
                 const etiqueta = document.getElementById('progreso-global');
