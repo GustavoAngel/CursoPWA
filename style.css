@@ -1,6 +1,6 @@
 
 :root {
-    --main-color: #05e2f7;        /* Color principal */
+    --main-color: #ffd700;        /* Color principal */
     --main-color-dark: #e6c200;  /* Tonalidad más oscura (hover) */
     --background-dark: #1a1a1a;  /* Fondo base oscuro */
 }
@@ -289,7 +289,7 @@
             box-shadow: 0 0 10px rgba(0, 0, 0, 0.3);
             min-height: calc(100vh - 70px); 
         }
-
+        .config-perfil-form,
         /* La clave para ocultar/mostrar secciones */
         .content-section {
             padding: 20px;
@@ -349,13 +349,15 @@
         .registro-form div {
             margin-bottom: 15px;
         }
-
+        .config-perfil-form label,
         .registro-form label, #coach-ia-tab label {
             display: block;
             margin-bottom: 5px;
             font-weight: bold;
         }
 
+        .config-perfil-form input,
+        .config-perfil-form select,
         .registro-form input,
         .registro-form textarea,
         #coach-ia-tab input,

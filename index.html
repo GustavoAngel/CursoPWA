@@ -28,8 +28,21 @@
             <span class="dot"></span>
             <span id="online-text">Verificando...</span>
         </div>
-
-        <div id="registrar-tab" class="content-section ">
+        <div class="config-perfil-form" style="display: flex; gap: 6px; margin-top: 6px; flex-direction: column;">
+            <h2>Mi perfil</h2> 
+            <label for="Nombre">Nombre</label>
+            <input type="text" id="Nombre" placeholder="Tu nombre aquí">
+            <label for="Edad">Edad</label>
+            <input type="number" id="Edad" placeholder="Tu edad aquí">
+            <label for="sexo">Sexo</label>
+            <select id="sexo">
+                <option value="" disabled selected>Selecciona tu sexo</option>
+                <option value="masculino">Masculino</option>
+                <option value="femenino">Femenino</option>
+                <option value="otro">Otro</option>
+            </select>
+        </div>
+        <div id="registrar-tab" class="content-section">
             <h2>📝 Registrar Sesión</h2>
             <div class="registro-form">
                 <div>
@@ -145,6 +158,7 @@
             <span class="icon">✍️</span>
             Registrar
         </button>
+
         <button class="nav-button" onclick="showTab('planeacion-tab', this)">
             <span class="icon">🗓️</span>
             Planeación
@@ -160,6 +174,10 @@
         <button class="nav-button" onclick="showTab('coach-ia-tab', this)">
             <span class="icon">🧠</span>
             Coach IA
+        </button>
+                <button class="nav-button active" onclick="showTab('config-tab', this)">
+            <span class="icon">⚙️</span>
+            Config
         </button>
     </nav>
 
@@ -916,7 +934,6 @@
         window.addEventListener('load', () => {
             checkOnlineStatus();
         });
-        
     </script>
 </body>
 </html>
