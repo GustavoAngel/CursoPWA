@@ -11,11 +11,8 @@
 
 </head>
 <body>
-                <!-- <button onclick="showCustomModal('¡Hola Entrenador!', '¡Bienvenido a tu bitácora Smart Fit! Usa este modal para mensajes importantes o confirmaciones.')" 
-                    class="action-button gemini-button" 
-                    style="background-color: #5d5d5d; color: white;">
-                    Saludar Modal
-                </button> -->
+
+
 
     <div class="container" style="position:relative;">
         <h1>
@@ -114,13 +111,10 @@
                     
 
         <h3 style="margin-top: 30px;">Planeación Semanal Resumida</h3>
-                    <div id="weekly-overview-cards" class="card-grid">
-                        
-
+            <div id="weekly-overview-cards" class="card-grid">
         </div>
-                    
-                    <p id="routine-note" style="margin-top: 20px; font-style: italic; color: #a0a0a0;"></p>
-                </div>
+            <p id="routine-note" style="margin-top: 20px; font-style: italic; color: #a0a0a0;"></p>
+        </div>
 
         <div id="bitacora-tab" class="content-section active">
                     <h2>📜 Historial de Sesiones</h2>
@@ -216,6 +210,32 @@
 
         </div>
     </div>
+
+    <div id="edit-routine-modal-overlay" class="modal-overlay " onclick="hideEditRoutineModal()">
+        <div id="edit-routine-modal-content" class="modal-content" onclick="event.stopPropagation()">
+            
+            <button class="modal-close" onclick="hideEditRoutineModal()">&times;</button>
+            
+            <h3 id="edit-routine-modal-title">Editar Rutina</h3>
+            <p id="edit-routine-modal-message">Aquí puedes editar tu rutina.</p>
+
+            <div id="edit-routine-exercises-container" style="max-height: 400px; overflow-y: auto; margin-top: 15px;">
+                <!-- Contenido dinámico de ejercicios -->
+            </div>
+
+            <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 10px; margin-top: 20px; justify-items: center;">
+                <button class="action-button modal-confirm-button" id="edit-routine-confirm-btn" onclick="confirmEditRoutine()">
+                    Guardar cambios
+                </button>
+
+                <button class="action-button modal-cancel-button" id="edit-routine-cancel-btn" onclick="hideEditRoutineModal()">
+                    Cancelar
+                </button>
+            </div>
+
+        </div>
+    </div>
+    
     <script src="app.js"></script>
     <script src="rutinas.js"></script>
     <script>
@@ -551,6 +571,33 @@
         
         calcularPorcentaje(); // Llamada inicial para mostrar el progreso al cargar
 
+        function cargarRutinaDelDiaModal(diaHoy, routineData) {
+            // Mostrar modal con la rutina del día
+            const modalTitle = `Detalles de la Rutina para ${diaHoy}`;
+            let modalMessage = '';
+
+            const todayRoutine = routineData.dias.find(d => d.dia.toLowerCase() === diaHoy.toLowerCase());
+            
+            if (todayRoutine && todayRoutine.ejercicios.length > 0) {
+                modalMessage += `<h4>Rutina del Día: ${todayRoutine.dia} (${todayRoutine.enfoque})</h4>`;
+                
+                todayRoutine.ejercicios.forEach((ej, index) => {
+                    modalMessage += `
+                        <div style="border: 1px solid #555; padding: 10px; margin-bottom: 10px; border-radius: 8px;">
+                            <h4>${ej.nombre}</h4>
+                            <p><strong>Series:</strong> ${ej.series} | <strong>Repeticiones:</strong> ${ej.repeticiones}</p>
+                        </div>
+                    `;
+                });
+
+            } else {
+                modalMessage = `<p class="p-message">¡Hoy es día de descanso o aún no tienes ejercicios! Genera una rutina con el Coach IA o descarga una planeación.</p>`;
+            }
+
+            showCustomModal(modalTitle, modalMessage, 'info');
+            
+        }
+
         // Carga la rutina del día en el formato de cards con checkboxes
         function cargarRutinaDelDia(diaHoy, routineData) {
             const dailyContent = document.getElementById('daily-routine-content');
@@ -653,6 +700,8 @@
                         <h4>${diaKey}</h4>
                         <p><strong>${enfoqueText}</strong> ${exerciseCountText}</p>
                         <p>Duración: ${data.duracion}</p>
+                        <button class="view-day-button" onclick="showEditRoutineModal('${diaKey}', ${JSON.stringify(routineData).replace(/"/g, '&quot;')})">
+                            Ver Detalles </button>
                     `;
                     weeklyCardsContainer.appendChild(card);
                 }
