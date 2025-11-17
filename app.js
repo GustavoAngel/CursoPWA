@@ -26,3 +26,6 @@
         function hideCustomModal() {
             document.getElementById('custom-modal-overlay').classList.remove('visible');
         }
+
+
+        

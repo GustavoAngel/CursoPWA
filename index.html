@@ -52,6 +52,7 @@
             <label for="macros">Macros</label>
             <div id="macros-list"> </div>
             <button id="guardarPerfil-button" class="action-button register-button">Guardar cambios</button>
+            <button class="action-button gemini-button" onclick="descargarRutinaBelcast()" >Descargar rutina Belcast</button>
         </div>
         <div id="registrar-tab" class="content-section">
             <h2>📝 Registrar Sesión</h2>
@@ -216,6 +217,7 @@
         </div>
     </div>
     <script src="app.js"></script>
+    <script src="rutinas.js"></script>
     <script>
 
         if ("serviceWorker" in navigator) {
@@ -260,7 +262,7 @@
                 document.getElementById('PesoObejtivo').value = perfil.pesoObjetivo || '';
                 if (perfil.macros && perfil.macros.calorias && perfil.macros.proteinas && perfil.macros.carbohidratos && perfil.macros.grasas) {
                 const htmloutput = 
-                    '<div style="font-family: Arial, sans-serif; padding: 10px; border: 1px solid #ddd; border-radius: 8px; background-color: #f9f9f9; width: 250px;">' +
+                    '<div style="font-family: Arial, sans-serif; padding: 10px; border: 1px solid #ddd; border-radius: 8px; ">' +
                         '<h3 style="color: #007bff; margin-top: 0; border-bottom: 2px solid #007bff; padding-bottom: 5px; margin-bottom: 10px;">📊 Resumen de Macros</h3>' +
                         
                         // Calorías
@@ -752,18 +754,30 @@
         
         // Esquema JSON para la rutina estructurada
         const routineSchema = {
-            type: "ARRAY",
-            items: {
-                type: "OBJECT",
-                properties: {
-                    "nombre": { "type": "STRING", description: "The name of the exercise, e.g., 'Sentadilla Profunda'." },
-                    "series": { "type": "STRING", description: "Number of suggested sets, e.g., '3'." },
-                    "repeticiones": { "type": "STRING", description: "Number of suggested reps, e.g., '8-12'." }
+            type: "OBJECT",
+            properties: {
+                "titulo": {
+                    type: "STRING",
+                    description: "Título general de la rutina debe ser corto, e.g. 'Rutina de Hombro y Abdomen'"
                 },
-                required: ["nombre", "series", "repeticiones"],
-                propertyOrdering: ["nombre", "series", "repeticiones"]
-            }
+                "rutina": {
+                    type: "ARRAY",
+                    items: {
+                        type: "OBJECT",
+                        properties: {
+                            "nombre": { "type": "STRING", description: "The name of the exercise, e.g., 'Sentadilla Profunda'." },
+                            "series": { "type": "STRING", description: "Number of suggested sets, e.g., '3'." },
+                            "repeticiones": { "type": "STRING", description: "Number of suggested reps, e.g., '8-12'." }
+                        },
+                        required: ["nombre", "series", "repeticiones"],
+                        propertyOrdering: ["nombre", "series", "repeticiones"]
+                    }
+                }
+            },
+            required: ["titulo", "rutina"],
+            propertyOrdering: ["titulo", "rutina"]
         };
+
         // --- FUNCIÓN DE INTERACCIÓN CON GEMINI (Q&A) ---
         async function askGemini() {
     const query = document.getElementById('gemini-input').value.trim();
@@ -931,13 +945,13 @@
             try {
                 const response = await exponentialBackoffFetch(GEMINI_BASE_URL, options);
                 const result = await response.json();
-                console.log("Respuesta de Gemini para rutina estructurada:", result);
+                //console.log("Respuesta de Gemini para rutina estructurada:", result.rutina);
                 const jsonText = result.candidates?.[0]?.content?.parts?.[0]?.text;
 
                 if (jsonText) {
                     const newExercises = JSON.parse(jsonText);
-                    
-                    if (newExercises.length > 0) {
+                    console.log("Ejercicios generados:", newExercises.rutina);
+                    if (newExercises.rutina.length > 0) {
                         // 1. Obtener la rutina actual
                         const routineJSON = localStorage.getItem(ROUTINE_KEY);
                         let routine = routineJSON ? JSON.parse(routineJSON) : null;
@@ -963,7 +977,7 @@
                         
                         // 3. Actualizar enfoque y fusionar ejercicios
                         currentDayRoutine.enfoque = `${currentDayRoutine.enfoque} + ${muscleGroup} (IA)`;
-                        currentDayRoutine.ejercicios = [...currentDayRoutine.ejercicios, ...newExercises];
+                        currentDayRoutine.ejercicios = [...currentDayRoutine.ejercicios, ...newExercises.rutina];
                         
                         // 4. Guardar y Recargar
                         localStorage.setItem(ROUTINE_KEY, JSON.stringify(routine));
