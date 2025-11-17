@@ -679,3 +679,35 @@
     font-size: 14px;
     
 }
+/* Ejercicio seleccionado */
+
+
+/* -------- GLOBAL SCROLLBAR (Chrome, Edge, Brave) -------- */
+*::-webkit-scrollbar {
+    width: 8px;
+    height: 8px; /* para scroll horizontal */
+}
+
+*::-webkit-scrollbar-track {
+    background: #b11515;
+    border-radius: 10px;
+}
+
+*::-webkit-scrollbar-thumb {
+    background: #dc4242;
+    border-radius: 10px;
+    transition: background 0.2s ease;
+}
+
+*::-webkit-scrollbar-thumb:hover {
+    background: #d12020;
+}
+
+/* -------- GLOBAL SCROLLBAR (Firefox) -------- */
+* {
+    scrollbar-width: thin;               /* thin | auto */
+    scrollbar-color: #c1c1c1 #f1f1f1;    /* thumb | track */
+}
+
+
+
