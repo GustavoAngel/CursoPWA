@@ -259,7 +259,31 @@
                 document.getElementById('Altura').value = perfil.altura || '';
                 document.getElementById('PesoActual').value = perfil.pesoActual || '';
                 document.getElementById('PesoObejtivo').value = perfil.pesoObjetivo || '';
-                const htmloutput = 'Calorias:'+ perfil.macros.calorias +'<br>Proteinas: '+ perfil.macros.proteinas + 'g<br>Carbohidratos: ' + perfil.macros.carbohidratos + 'g<br>Grasas: ' + perfil.macros.grasas + 'g';
+                const htmloutput = 
+                    '<div style="font-family: Arial, sans-serif; padding: 10px; border: 1px solid #ddd; border-radius: 8px; background-color: #f9f9f9; width: 250px;">' +
+                        '<h3 style="color: #007bff; margin-top: 0; border-bottom: 2px solid #007bff; padding-bottom: 5px; margin-bottom: 10px;">📊 Resumen de Macros</h3>' +
+                        
+                        // Calorías
+                        '<p style="margin: 5px 0; font-size: 1.1em;">' +
+                            '<strong style="color: #28a745;">🔥 Calorías:</strong> ' + perfil.macros.calorias +
+                        '</p>' +
+                        
+                        // Proteínas
+                        '<p style="margin: 5px 0;">' +
+                            '<strong style="color: #dc3545;">🥩 Proteínas:</strong> ' + perfil.macros.proteinas + 'g' +
+                        '</p>' +
+                        
+                        // Carbohidratos
+                        '<p style="margin: 5px 0;">' +
+                            '<strong style="color: #ffc107;">🍚 Carbohidratos:</strong> ' + perfil.macros.carbohidratos + 'g' +
+                        '</p>' +
+                        
+                        // Grasas
+                        '<p style="margin: 5px 0;">' +
+                            '<strong style="color: #6f42c1;">🥑 Grasas:</strong> ' + perfil.macros.grasas + 'g' +
+                        '</p>' +
+                        
+                    '</div>';
                 document.getElementById('macros-list').innerHTML = htmloutput || '';
             }
         }
