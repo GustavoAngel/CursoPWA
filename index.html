@@ -28,7 +28,7 @@
             <span class="dot"></span>
             <span id="online-text">Verificando...</span>
         </div>
-        <div class="config-perfil-form" style="display: flex; gap: 6px; margin-top: 6px; flex-direction: column;">
+        <div id="config-tab" class="config-perfil-form content-section" style="display: flex; gap: 6px; margin-top: 6px; flex-direction: column;">
             <h2>Mi perfil</h2> 
             <label for="Nombre">Nombre</label>
             <input type="text" id="Nombre" placeholder="Tu nombre aquí">
@@ -41,6 +41,17 @@
                 <option value="femenino">Femenino</option>
                 <option value="otro">Otro</option>
             </select>
+            <label for="Altura">Altura</label>
+            <input type="number" id="Altura" placeholder="Tu altura en cm aquí">
+            <label for="PesoActual">Peso</label>
+            <input type="number" id="PesoActual" placeholder="Tu peso en kg aquí">
+            <label for="PesoObejtivo">Peso objetivo</label>
+            <input type="number" id="PesoObejtivo" placeholder="Tu peso objetivo en kg aquí">
+            <label for="objetivo">objetivo</label>
+            <textarea type="text" id="objetivo" placeholder="Tu objetivo fitness aquí"></textarea>
+            <label for="macros">Macros</label>
+            <div id="macros-list"> </div>
+            <button id="guardarPerfil-button" class="action-button register-button">Guardar cambios</button>
         </div>
         <div id="registrar-tab" class="content-section">
             <h2>📝 Registrar Sesión</h2>
@@ -119,15 +130,24 @@
                 </div>
 
         <div id="gemini-tab" class="content-section">
-                    <h2>✨ Pregunta a Gemini (Fitness Coach)</h2>
+                    <h2>✨ Dime tu objetivo Fitness</h2>
                     <p>Obtén consejos de entrenamiento, nutrición o información sobre ejercicios específicos. ¡Pregunta lo que necesites!</p>
                     
                     <textarea id="gemini-input" placeholder="Ej: ¿Cuáles son 3 ejercicios para mejorar la sentadilla profunda?" onkeydown="if(event.key === 'Enter' && !event.shiftKey) { event.preventDefault(); askGemini(); }"></textarea>
                     <button onclick="askGemini()" class="action-button gemini-button">
                         Enviar Pregunta
                     </button>
-                    
+                    <div>
+                        <div id="propuesta-macros">
+
+                        </div>
+                        <button id="aceptar-macros-btn" onclick="" class="action-button gemini-button">
+                            Guargar propuesta de macros
+                        </button>
+                    </div>
+
                     <h3>Respuesta</h3>
+                    
                     <div id="gemini-response-area">
                         <p class="p-message">Las respuestas aparecerán aquí. ¡Pregúntame algo!</p>
                     </div>
@@ -202,6 +222,48 @@
             navigator.serviceWorker.register("./service-worker.js");
         }
 
+        document.getElementById('guardarPerfil-button').addEventListener('click', function() {
+            const nombre = document.getElementById('Nombre').value;
+            const edad = document.getElementById('Edad').value;
+            const sexo = document.getElementById('sexo').value;
+            const objetivo = document.getElementById('objetivo').value;
+            const altura = document.getElementById('Altura').value;
+            const pesoActual = document.getElementById('PesoActual').value;
+            const pesoObjetivo = document.getElementById('PesoObejtivo').value;
+
+            const perfil = {
+                nombre: nombre,
+                edad: edad,
+                sexo: sexo,
+                objetivo: objetivo,
+                altura: altura,
+                pesoActual: pesoActual,
+                pesoObjetivo: pesoObjetivo
+            };
+
+            localStorage.setItem('perfilUsuario', JSON.stringify(perfil));
+            showCustomModal('Perfil Guardado', 'Tu perfil ha sido guardado correctamente.');
+        });
+
+        function cargarPeril() {
+            const perfilJSON = localStorage.getItem('perfilUsuario');
+            
+            console.log('Cargando perfil desde LocalStorage:', JSON.parse(perfilJSON).macros);
+
+            if (perfilJSON) {
+                const perfil = JSON.parse(perfilJSON);
+                document.getElementById('Nombre').value = perfil.nombre || '';
+                document.getElementById('Edad').value = perfil.edad || '';
+                document.getElementById('sexo').value = perfil.sexo || '';
+                document.getElementById('objetivo').value = perfil.objetivo || '';
+                document.getElementById('Altura').value = perfil.altura || '';
+                document.getElementById('PesoActual').value = perfil.pesoActual || '';
+                document.getElementById('PesoObejtivo').value = perfil.pesoObjetivo || '';
+                const htmloutput = 'Calorias:'+ perfil.macros.calorias +'<br>Proteinas: '+ perfil.macros.proteinas + 'g<br>Carbohidratos: ' + perfil.macros.carbohidratos + 'g<br>Grasas: ' + perfil.macros.grasas + 'g';
+                document.getElementById('macros-list').innerHTML = htmloutput || '';
+            }
+        }
+        cargarPeril();
 
         document.getElementById('ResetButton').addEventListener('click', function() {
         showCustomModal('Reiniciar Entrenamiento', '¿Estás seguro de que deseas reiniciar tu entrenamiento? Esto eliminará la rutina actual.', 'confirm', function(confirmed) {
@@ -311,6 +373,7 @@
             document.querySelectorAll('.content-section').forEach(c => {
                  c.style.display = "none";
             });
+
             document.getElementById(tabId).style.display = "block";
         }
 
@@ -677,73 +740,140 @@
         };
         // --- FUNCIÓN DE INTERACCIÓN CON GEMINI (Q&A) ---
         async function askGemini() {
-            const query = document.getElementById('gemini-input').value.trim();
-            const responseArea = document.getElementById('gemini-response-area');
+    const query = document.getElementById('gemini-input').value.trim();
+    const responseArea = document.getElementById('gemini-response-area');
+    
+    if (!query) {
+        responseArea.innerHTML = '<p class="p-message error-message">Por favor, ingresa una pregunta.</p>';
+        return;
+    }
+
+    responseArea.innerHTML = '<p class="loading-message">Generando respuesta... ✨</p>';
+    //document.getElementById('gemini-input').value = ''; 
+
+    // 1. Definir la instrucción del sistema (Reglas del modelo)
+    const systemInstructionText = "Eres un asistente experto en fitness y nutrición. Responde a las preguntas de manera concisa y útil. Y AL FINAL INCLUYE LOS MACRONUTRIENTES Y CALORIAS. ANTES DE ESCRIBIR LOS MACROS INCLUYE LA PALBRA 'MACROSNOMOSTRAR' y apartir de aqui solo dame los macros en formato json con la siguiete estructura {calorias: '', proteinas: '', carbohidratos: '', grasas: ''} SIN NINGUN TEXTO ADICIONAL.";
+
+    // 2. Obtener el perfil del usuario para el historial/consulta (Contexto para la pregunta)
+    const perfil = localStorage.getItem('perfilUsuario');
+    const perfilTexto = perfil ? `El usuario tiene el siguiente perfil: ${perfil}. ` : '';
+    
+    // 3. Crear el mensaje de la consulta completa (que incluye el contexto del usuario)
+    const fullPrompt = `${perfilTexto}Pregunta del usuario: ${query}`;
+
+    // 4. Estructurar el payload correctamente
+    const payload = {
+        // La instrucción del sistema define el rol/tono del modelo
+        systemInstruction: { 
+            parts: [{ text: systemInstructionText }] 
+        },
+        // El contenido es el mensaje del usuario (incluyendo el contexto del perfil)
+        contents: [{ 
+            parts: [{ text: fullPrompt }] 
+        }],
+        // generationConfig: {
+        //             responseMimeType: "application/json",
+        //             responseSchema: routineSchema
+        //         },
+        // Herramientas
+        tools: [{ "google_search": {} }], 
+    };
+
+    const options = {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify(payload)
+    };
+
+    try {
+        // ... (El resto del código de fetch y manejo de respuesta sigue igual)
+        const response = await exponentialBackoffFetch(GEMINI_BASE_URL, options);
+        const result = await response.json();
+        
+        const candidate = result.candidates?.[0];
+        
+        if (candidate && candidate.content?.parts?.[0]?.text) {
+            const text = candidate.content.parts[0].text;
+            const textocortado = text.split("MACROSNOMOSTRAR");
+
+            let sources = [];
+            const groundingMetadata = candidate.groundingMetadata;
+
+            if (groundingMetadata && groundingMetadata.groundingAttributions) {
+                sources = groundingMetadata.groundingAttributions
+                    .map(attribution => ({
+                        uri: attribution.web?.uri,
+                        title: attribution.web?.title,
+                    }))
+                    .filter(source => source.uri && source.title);
+            }
+
+            let outputHTML = `<div>${textocortado[0].replace(/\n/g, '<br>')}</div>`;
             
-            if (!query) {
-                responseArea.innerHTML = '<p class="p-message error-message">Por favor, ingresa una pregunta.</p>';
-                return;
+            if (sources.length > 0) {
+                outputHTML += '<h4 style="margin-top: 20px; color: #e0e0e0;">Fuentes:</h4>';
+                outputHTML += '<ul class="source-list">';
+                sources.forEach(source => {
+                    outputHTML += `<li><a href="${source.uri}" target="_blank">${source.title}</a></li>`;
+                });
+                outputHTML += '</ul>';
             }
 
-            responseArea.innerHTML = '<p class="loading-message">Generando respuesta... ✨</p>';
-            document.getElementById('gemini-input').value = ''; 
-
-            const payload = {
-                contents: [{ parts: [{ text: query }] }],
-                tools: [{ "google_search": {} }],
-                systemInstruction: { parts: [{ text: QNA_SYSTEM_INSTRUCTION }] },
-            };
-
-            const options = {
-                method: 'POST',
-                headers: { 'Content-Type': 'application/json' },
-                body: JSON.stringify(payload)
-            };
-
+           // console.log("Respuesta de Gemini para Q&A (sin macros):", textocortado[0]);
+           // console.log("Respuesta de Gemini para Q&A (con macros):", textocortado[1]);
+            textocortado[1] = textocortado[1].replace(/'/g, '"'); // Reemplaza comillas simples por dobles
             try {
-                const response = await exponentialBackoffFetch(GEMINI_BASE_URL, options);
-                const result = await response.json();
-                
-                const candidate = result.candidates?.[0];
-                
-                if (candidate && candidate.content?.parts?.[0]?.text) {
-                    const text = candidate.content.parts[0].text;
-                    let sources = [];
-                    const groundingMetadata = candidate.groundingMetadata;
+                const macros = JSON.parse(textocortado[1]);
+                macrosPropuestos = macros;
+                console.log("Macros parseados:", macros);
+                const outputHTML2 = `
+                    <h4 style="margin-top: 20px; color: #e0e0e0;">Macros Sugeridos:</h4>
+                    <ul class="macros-list">
+                        <li><strong>Calorías:</strong> ${macros.calorias}</li>
+                        <li><strong>Proteínas:</strong> ${macros.proteinas} g</li>
+                        <li><strong>Carbohidratos:</strong> ${macros.carbohidratos} g</li>
+                        <li><strong>Grasas:</strong> ${macros.grasas} g</li>
+                    </ul>
+                `;
+                document.getElementById('propuesta-macros').innerHTML = outputHTML2;
 
-                    if (groundingMetadata && groundingMetadata.groundingAttributions) {
-                        sources = groundingMetadata.groundingAttributions
-                            .map(attribution => ({
-                                uri: attribution.web?.uri,
-                                title: attribution.web?.title,
-                            }))
-                            .filter(source => source.uri && source.title);
-                    }
-
-                    let outputHTML = `<div>${text.replace(/\n/g, '<br>')}</div>`;
-                    
-                    if (sources.length > 0) {
-                        outputHTML += '<h4 style="margin-top: 20px; color: #e0e0e0;">Fuentes:</h4>'; /* Subtítulo fuentes */
-                        outputHTML += '<ul class="source-list">';
-                        sources.forEach(source => {
-                            outputHTML += `<li><a href="${source.uri}" target="_blank">${source.title}</a></li>`;
-                        });
-                        outputHTML += '</ul>';
-                    }
-
-                    responseArea.innerHTML = outputHTML;
-
-                } else {
-                    responseArea.innerHTML = '<p class="error-message">Error: No se pudo obtener una respuesta válida de Gemini. Inténtalo de nuevo.</p>';
-                }
-
-            } catch (error) {
-                console.error("Error al comunicarse con la API de Gemini:", error);
-                responseArea.innerHTML = '<p class="error-message">Ocurrió un error al procesar tu solicitud. Revisa la consola para más detalles.</p>';
+            } catch (parseError) {
+                console.error("Error al parsear los macros JSON:", parseError);
             }
+            responseArea.innerHTML = outputHTML;
+
+        } else {
+            responseArea.innerHTML = '<p class="error-message">Error: No se pudo obtener una respuesta válida de Gemini. Inténtalo de nuevo.</p>';
         }
 
-        // --- FUNCIÓN DE COACH IA (GENERACIÓN DE RUTINA ESTRUCTURADA) ---
+    } catch (error) {
+        console.error("Error al comunicarse con la API de Gemini:", error);
+        responseArea.innerHTML = '<p class="error-message">Ocurrió un error al procesar tu solicitud. Revisa la consola para más detalles.</p>';
+    }
+}
+    var macrosPropuestos = {};
+    document.getElementById('aceptar-macros-btn').addEventListener('click', function() {
+        if (Object.keys(macrosPropuestos).length === 0) {
+            showCustomModal('Atención', 'No hay macros propuestos para aceptar. Por favor, realiza una pregunta primero.', 'alert');
+            return;
+        }
+
+        const perfil = {
+            nombre: document.getElementById('Nombre').value || 'Usuario',
+            edad: document.getElementById('Edad').value || 'N/A',
+            sexo: document.getElementById('sexo').value || 'N/A',
+            objetivo: document.getElementById('objetivo').value || 'N/A',
+            altura: document.getElementById('Altura').value || 'N/A',
+            pesoActual: document.getElementById('PesoActual').value || 'N/A',
+            pesoObjetivo: document.getElementById('PesoObejtivo').value || 'N/A',
+            macros: macrosPropuestos
+        };
+
+        localStorage.setItem('perfilUsuario', JSON.stringify(perfil));
+        showCustomModal('Macros Aceptados', 'Los macronutrientes sugeridos han sido guardados en tu perfil.');
+    });
+
+// --- FUNCIÓN DE COACH IA (GENERACIÓN DE RUTINA ESTRUCTURADA) ---
         async function generateRoutine() {
             const muscleGroup = document.getElementById('muscle-group').value.trim();
             const statusArea = document.getElementById('coach-status-area');
